@@ -1,12 +1,13 @@
 import java.util.*;
 
 public class Node {
-    private int state;
+    private int state, ans;
     private double features[];
 
-    public Node(List<Double> attrs, int state){
+    public Node(List<Double> attrs, int state){ //used for centroid
         features=new double[attrs.size()];
         this.state=state; //default state is unassigned
+        this.ans=state;
         for(int i=0;i<attrs.size();i++)
             features[i]=attrs.get(i);
     }
@@ -14,6 +15,14 @@ public class Node {
     public Node(List<Double> attrs){
         features=new double[attrs.size()];
         this.state=-1; //default state is unassigned
+        for(int i=0;i<attrs.size();i++)
+            features[i]=attrs.get(i);
+    }
+
+    public Node(int label, List<Double> attrs){ //used for creating data nodes
+        features=new double[attrs.size()];
+        this.state=-1; //default state is unassigned
+        this.ans=label;
         for(int i=0;i<attrs.size();i++)
             features[i]=attrs.get(i);
     }
@@ -33,6 +42,10 @@ public class Node {
 
     public int getState(){
         return state;
+    }
+
+    public int getAns(){
+        return ans;
     }
 
     public double getFeature(int i){
