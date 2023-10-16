@@ -27,7 +27,7 @@ public class Node {
             features[i]=attrs.get(i);
     }
 
-    public Node(int attrSize, int state){
+    public Node(int attrSize, int state){ //used for new centroid while clustering
         features=new double[attrSize];
         this.state=state;
     }

@@ -72,23 +72,22 @@ public class KMeans{
             if(centroid.getState()!=cluster)
                 System.out.println("Error!");
             
-            for(Node node:nodes){ //first find majority class
-                if(node.getAns()==cluster)
-                    countClass[node.getState()]++;
-                //System.out.println(node.getAns());
+            for(Node node:nodes){ //Find distribution of various classes in the cluster
+                if(node.getState()==cluster)
+                    countClass[node.getAns()]++;
             }
             int curStat=-1, stateCount=-1;
-            for(int i=0;i<k;i++)
-                System.out.print(countClass[i]+" ");
             System.out.println();
-            for(int i=0;i<k;i++){
+            for(int i=0;i<k;i++){ //first find majority class in the cluster
                 if(countClass[i]>stateCount){
                     stateCount=countClass[i];
                     curStat=i;
                 }
             }
-            System.out.println("Current State = "+curStat);
+            int sum=0;
             for(Node node:nodes){
+                if(curStat==node.getState())
+                    sum++;
                 if(curStat==node.getState() && node.getState()==node.getAns()){
                     tp++;
                     //System.out.print("*");
@@ -99,14 +98,10 @@ public class KMeans{
                 if(curStat!=node.getState() && curStat==node.getAns())
                     fn++;
             }
-            System.out.println("tp = "+tp+"\tfp = "+fp+"\t fn = "+fn );
 
             double precision=tp*100.0/(tp+fp);
             double recall=tp*100.0/(tp+fn);
             double f1=2.0*precision*recall/(precision+recall);
-            int sum=0;
-            for(int i=0;i<k;i++)
-                sum+=countClass[i];
             double accuracy=tp*100.0/sum;
             System.out.println("Results of Cluster No. "+(cluster+1));
             System.out.println("Accuracy = "+accuracy+"%");
@@ -118,15 +113,17 @@ public class KMeans{
     }
 
     private void clusterRun(){
-        Node newCentroids[]=new Node[k];
-        int kCount[]=new int[k];
-        for(int i=0;i<k;i++){ //initializing new centroids
-            newCentroids[i]=new Node(features, i);
-            kCount[i]=0;
-        }
-        boolean change=false;;
-        //iterating through all nodes to find their closest centroid and change their state accordingly
+        boolean change=false;
         do{
+            System.out.println("Clustering");
+            Node newCentroids[]=new Node[k];
+            int kCount[]=new int[k];
+            for(int i=0;i<k;i++){ //initializing new centroids
+                newCentroids[i]=new Node(features, i);
+                kCount[i]=0;
+            }
+        //iterating through all nodes to find their closest centroid and change their state accordingly
+        
             for(Node node:nodes){ 
                 double distance=Double.MAX_VALUE;
                 for(int i=0; i<k; i++){
@@ -138,20 +135,19 @@ public class KMeans{
                     }
                 }
 
-                for(int i=0; i<features; i++){
-                    newCentroids[node.getState()].addAttrs(node);
-                    kCount[node.getState()]++;
-                }
+                newCentroids[node.getState()].addAttrs(node);
+                kCount[node.getState()]++;
             }
-            for(int i=0;i<k;i++)
+            for(int i=0;i<k;i++){
                 newCentroids[i].divide(kCount[i]); //finds new centroid
+                centroids[i]=newCentroids[i]; //assign new value of centroid
+            }
 
             //Check if centroids are close enough
             change=false;
             for(int i=0;i<sample;i++){
                 if(labels[i]!=nodes[i].getState()){
                     change=true;
-                    //System.out.println("Change in labels detected");
                     labels[i]=nodes[i].getState();
                 }
             }

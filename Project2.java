@@ -11,7 +11,7 @@ public class Project2 {
         int[] labels=dataLoader.getLabels();
         int cols=data.get(0).size(); //get number of features
         int rows=data.size();
-        KMeans model=new KMeans(4, cols, rows, "euclidian");
+        KMeans model=new KMeans(3, cols, rows, "mahanalobis");
         model.fit(data, labels);
         System.out.println("Data Fitted into model");
         model.run(dataLoader.getLabels());
